@@ -3,9 +3,8 @@ library(dplyr)
 library(tidyr)
 
 
-data <- read.csv("/Users/Lucas Henrique/Desktop/UFRPE/Comp. Analise de Dados/Dados_Estatisticos.csv",sep = ";", header=TRUE)
+data <- read.csv("C:/Users/Lucas Henrique/Documents/GitHub/R---DataBases-/Dados_Estatisticos.csv",sep = ";", header=TRUE)
 
-# Suponha que df seja o seu data frame
 data_filt <- data %>% select(4,5,6,7,8,10,12,13,14,16,20,21)
 
 data_filt <- data_filt %>% filter(

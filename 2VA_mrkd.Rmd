@@ -1,0 +1,93 @@
+---
+title: "Analise de Informações Aereas"
+author: "Lucas"
+date: "`r Sys.Date()`"
+output: html_document
+---
+## Abas{.tabset}
+
+### 1- Introdução
+
+Essa análise é correspondente aos dados gerados por viagens de avião durante os anos 2000-2024 de todos os aeroportos do mundo.
+
+Esses dados são interessantes para analisar tendencias de viagens e em relação aos impactos que os varios eventos mundiais causam no sistema aeroviário.
+
+
+
+
+### 2- Pacotes Necessários
+```{r setup, include=TRUE, echo=FALSE}
+library(plotly)
+library(dplyr)
+library(tidyr)
+library(DT)
+
+```
+
+
+### 3- Import e Preparação
+```{r setup1, include=TRUE, echo=TRUE}
+
+data <- read.csv("C:/Users/Lucas Henrique/Documents/GitHub/R---DataBases-/Dados_Estatisticos.csv",sep = ";", header=TRUE)
+
+data_filt <- data %>% select(4,5,6,7,8,10,12,13,14,16,20,21)
+
+data_filt <- data_filt %>% filter(
+  !is.na(ANO) & ANO != "" &
+    !is.na(MES) & MES != "" &
+    !is.na(AEROPORTO_DE_ORIGEM_NOME) & AEROPORTO_DE_ORIGEM_NOME != "" &
+    !is.na(AEROPORTO_DE_DESTINO_NOME) & AEROPORTO_DE_DESTINO_NOME != "" &
+    !is.na(PASSAGEIROS_PAGOS) &
+    !is.na(PASSAGEIROS_GRATIS)
+)
+
+data_filt$PASSAGEIROS_TOTAIS = data_filt$PASSAGEIROS_GRATIS + data_filt$PASSAGEIROS_PAGOS
+
+data_filt
+
+```
+
+
+### 4- Operações Iniciais
+```{r setup2, include=TRUE, echo=TRUE}
+df_ano <- data_filt %>%
+  group_by(ANO) %>%
+  summarise(soma_valores = sum(PASSAGEIROS_TOTAIS, na.rm = TRUE))
+
+datatable(head(df_ano,20), options = list(scrollX = TRUE))
+
+fig <- plot_ly(x = ~df_ano$ANO, y = ~df_ano$soma_valores, type = 'scatter', mode = 'lines+markers')
+  
+fig <- fig %>%
+  layout(title = 'Frequencia de voos durantes os anos 2000 - 2024',
+         yaxis=list(title = 'Qnd de Voos'),
+         xaxis=list(title = 'Anos'))
+
+fig
+
+```
+
+```{r 2019, include=TRUE, echo=TRUE}
+
+data_2019 <- data_filt %>% filter(ANO == 2019)
+
+datatable(head(data_2019,20), options = list(scrollX = TRUE))
+
+df_2019 <- data_filt %>%
+  group_by(MES) %>%
+  summarise(soma_valores = sum(PASSAGEIROS_TOTAIS, na.rm = TRUE))
+
+fig <- plot_ly(x = ~df_2019$MES, y = ~df_2019$soma_valores, type = 'scatter', mode = 'lines+markers')
+
+fig <- fig %>%
+  layout(title = 'Frequencia de voos durantes os meses de 2019',
+         yaxis=list(title = 'Qnd de Voos'),
+         xaxis=list(title = 'Meses'))
+
+fig
+
+```
+
+
+
+### 5- Conclusão
