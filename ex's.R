@@ -15,15 +15,15 @@ View(cats_data)
 -----------------------------------------------------------------------
   
   
-# Criando um exemplo de data frame
-df <- data.frame(
-grupo = c("A", "A", "B", "B", "C", "C"),
-valores = c(10, 20, 30, 40, 50, 60)
-)
+  # Criando um exemplo de data frame
+  df <- data.frame(
+    grupo = c("A", "A", "B", "B", "C", "C"),
+    valores = c(10, 20, 30, 40, 50, 60)
+  )
 
 print(df)
 
-# Usando aggregate para calcular a média dos valores por grupo
+# Usando aggregate para calcular a mC)dia dos valores por grupo
 result <- aggregate(valores ~ grupo, data = df, FUN = mean)
 
 # Visualizando o resultado
@@ -74,37 +74,37 @@ print(df)
 df_selecionado <- df %>% select(nome, idade)
 print(df_selecionado)
 
-# Filtrando as linhas onde a idade é maior que 25
+# Filtrando as linhas onde a idade C) maior que 25
 df_filtrado <- df %>% filter(idade > 25)
 print(df_filtrado)
 
 
-# Reordenando as linhas pelo salário em ordem crescente
+# Reordenando as linhas pelo salC!rio em ordem crescente
 df_ordenado <- df %>% arrange(salario)
 print(df_ordenado)
 
 
-# Reordenando as linhas pelo salário em ordem decrescente
+# Reordenando as linhas pelo salC!rio em ordem decrescente
 df_ordenado_desc <- df %>% arrange(desc(salario))
 print(df_ordenado_desc)
 
 
-# Adicionando uma nova coluna 'salario_anual' que é o salário multiplicado por 12
+# Adicionando uma nova coluna 'salario_anual' que C) o salC!rio multiplicado por 12
 df_mutado <- df_ordenado_desc %>% mutate(salario_anual = salario * 12)
 print(df_mutado)
 
 
-# Calculando a média de idade e salário
+# Calculando a mC)dia de idade e salC!rio
 df_resumido <- df %>% summarise(media_idade = mean(idade), media_salario = mean(salario))
 print(df_resumido)
 
 
-# Agrupando por idade e calculando a média de salário por idade
+# Agrupando por idade e calculando a mC)dia de salC!rio por idade
 df_grouped <- df %>% group_by(idade) %>% summarise(media_salario = mean(salario))
 print(df_grouped)
 
 
-# Selecionando, filtrando e ordenando em um único pipeline
+# Selecionando, filtrando e ordenando em um C:nico pipeline
 df_pipeline <- df %>%
   select(nome, idade, salario) %>%
   filter(idade > 25) %>%
@@ -113,7 +113,7 @@ df_pipeline <- df %>%
 print(df_pipeline)
 
 
-# Usando slice() para selecionar linhas específicas
+# Usando slice() para selecionar linhas especC-ficas
 df_slice <- df %>% slice(1, 3, 5)
 
 # Visualizando o resultado
@@ -125,7 +125,7 @@ df_slice_head <- df %>% slice_head(n = 3)
 # Visualizando o resultado
 print(df_slice_head)
 
-# Selecionando as últimas 3 linhas
+# Selecionando as C:ltimas 3 linhas
 df_slice_tail <- df %>% slice_tail(n = 3)
 
 # Visualizando o resultado

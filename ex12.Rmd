@@ -1,0 +1,473 @@
+---
+title: "Exercicio 12"
+author: "Lucas Henrique Gonzaga de Sales"
+date: "22/08/2024"
+output: html_document
+bibliography: ref.bib
+---
+
+
+```{r setup, include=FALSE, echo=FALSE}
+
+library(plotly)
+library(dplyr)
+library(tidyr)
+
+``` 
+
+## Abas{.tabset}
+
+### Questão 1
+```{r base_de_dados, include=TRUE, echo=TRUE}
+
+MRT_1F <-c(517.1468515630205, 85.13094142168089, 30.333207896694553, 12.694776264558937, 3.3041601673945418, 1.1823111717498882, 1.1892293502386786)
+
+MRT_3F <-c(156.68929936163462, 11.540837783562276, 0.4512835621696538, 0.4509797929766453, 0.4502068233039181, 0.4496185276300172, 0.4543157082191288)
+
+MRT_5F <-c(83.90319666471157, 0.3068151086494968, 0.30522314133037304, 0.3072588968084928, 0.30655265997285697, 0.3055812715727718, 0.3053297166713006)
+
+MRT_10F <-c(29.55430642951759, 0.19832832665772515, 0.1971923924717474, 0.19796648905716516, 0.19615594370806338, 0.2034569237883263, 0.19617420889447737)
+
+MRT_15F <-c(11.317736530583566, 0.167364215666193, 0.16172168266811013, 0.16701085329580515, 0.1598052657153692, 0.1645934043532696, 0.16216563797118075)
+
+MRT_sem_F <-c(11.93430909937736, 0.6095414637034009, 0.6060645101029295, 0.612167181646899, 0.6146761002685637, 0.6096747087200697, 0.6125810476877268)
+
+
+clock <- c(0.1, 0.5, 1, 1.5, 2, 2.5, 3)
+
+par(mar = c(2, 2, 1, 1), cex = 0.8)
+
+# Configurando o layout
+layout(matrix(c(1, 1,
+                2, 3,
+                4, 5,
+                6, 7), nrow=4, byrow=TRUE),
+       heights = c(4, 3, 3, 3),
+       widths = c(1, 1))  
+
+
+# Gráfico 1: Ocupa toda a primeira linha
+plot(clock,MRT_1F, type = "o",col="black", pch = 4, xlab="Time between Things requested (seconds)", ylab="Response Time")
+
+legend("topright", legend = c("1 Fog", "3 Fogs", "5 Fogs", "10 Fogs", "15 Fogs", "w/o fog"),
+       col = c("black", "yellow", "red", "blue", "purple", "green"), lty = 1, pch = c(4, 11, 1, 2, 5, 4))
+
+
+lines(clock,MRT_3F,col="yellow",type="o" , pch = 11)
+lines(clock,MRT_5F,col="red",type="o", pch = 1)
+lines(clock,MRT_10F,col="blue",type="o", pch = 2)
+lines(clock,MRT_15F,col="purple",type="o", pch = 5)
+lines(clock,MRT_sem_F,col="green",type="o", pch = 4)
+
+barplot(rbind(MRT_sem_F,MRT_1F), beside = TRUE,col = c("#E6E6E6", "#666666"), xlab="Time between Things requested (seconds)", ylab="Response Time",names.arg = clock,  log = "y")
+
+legend("topright", c("w/o fog", "1 Fog"), fill = c("#E6E6E6", "#666666"))
+
+barplot(rbind(MRT_sem_F,MRT_3F), beside = TRUE,col = c("#E6E6E6", "#666666"), xlab="Time between Things requested (seconds)", ylab="Response Time",names.arg = clock, log = "y")
+
+legend("topright", c("w/o fog", "3 Fog"), fill = c("#E6E6E6", "#666666"))
+
+barplot(rbind(MRT_sem_F,MRT_5F), beside = TRUE,col = c("#E6E6E6", "#666666"), xlab="Time between Things requested (seconds)", ylab="Response Time",names.arg = clock, log = "y")
+
+legend("topright", c("w/o fog", "5 Fog"), fill = c("#E6E6E6", "#666666"))
+
+barplot(rbind(MRT_sem_F,MRT_10F), beside = TRUE,col = c("#E6E6E6", "#666666"), xlab="Time between Things requested (seconds)", ylab="Response Time",names.arg = clock, log = "y")
+
+legend("topright", c("w/o fog", "10 Fog"), fill = c("#E6E6E6", "#666666"))
+
+barplot(rbind(MRT_sem_F,MRT_15F), beside = TRUE,col = c("#E6E6E6", "#666666"), xlab="Time between Things requested (seconds)", ylab="Response Time",names.arg = clock, log = "y")
+
+legend("topright", c("w/o fog", "15 Fog"), fill = c("#E6E6E6", "#666666"))
+
+``` 
+
+  
+### Questão 2
+```{r base_de_dados2, include=TRUE, echo=TRUE}
+
+Good = c(53.8,33.9,2.6,0)
+VeryG = c(43.6,54.2,60.5,21.4)
+Exc = c(2.6,11.9,36.8,78.6)
+Names = c("$10-19","$20-29","$30-39","$40-49")
+data = rbind(Good,VeryG,Exc)
+
+colnames(data)= Names
+
+par(mar = c(5, 4, 4, 8))
+barplot(data, beside = FALSE, main="Meal Quality by Price Category", col=c("black", "gray", "gold"), xlab="Meal Price ($)", ylab="Quality Rating (%)",names.arg = Names)
+
+legend(
+  "topright",                             
+  legend = c("Good", "Very Good", "Excellent"), 
+  fill = c("black", "gray", "gold"),   
+  xpd = TRUE,
+  inset = c(-0.3, 0)                      
+)
+
+
+
+``` 
+
+
+### Questão 3
+
+```{r setup3, include=TRUE, echo=TRUE}
+
+maio = subset(airquality,
+              Month == 5)
+
+c = ((maio$Temp -32)/1.8)
+
+hist(c,                   
+     main = "Distribuição da Temperatura",   
+     xlab = "Temperatura(C)",                   
+     ylab = "Dias do Mes",                
+     col = "#B0C4DE",                    
+     border = "black",
+     probability = TRUE,
+     freq = FALSE
+     )                   
+
+lines(density(c), col = "red")
+
+``` 
+
+### Questão 4
+
+```{r setup4, include=TRUE, echo=TRUE}
+
+sales <- read.table("https://training-course-material.com/images/8/8f/Sales.txt", header=TRUE)
+
+porcent = round(sales$SALES/ sum(sales$SALES) *100)
+
+rotulos= paste(sales$COUNTRY,"-", porcent, "%", sep=" ")
+
+pie(sales$SALES,labels=rotulos,col=c("#1E90FF", "#00BFFF", "#87CEEB", "#4682B4", "#5F9EA0", "#6495ED"),main="Sales by country")
+
+legend("topright",legend=sales$COUNTRY, fill=c("#1E90FF", "#00BFFF", "#87CEEB", "#4682B4", "#5F9EA0", "#6495ED"), title = "Categorias", xpd = TRUE,
+  inset = c(-0.06, 0))
+
+``` 
+
+
+
+### Questão 5
+
+```{r setup5, include=TRUE, echo=TRUE}
+
+
+boxplot(count ~ spray,data = InsectSprays, main="Contagem de Insetos por Tipo de Inseticida",xlab="Tipo", ylab="Contagem de insetos", col = "yellow", outline = FALSE )
+
+
+``` 
+
+### Questão 6
+
+```{r setup6, include=TRUE, echo=TRUE}
+
+monitoringCloudData_0.1 <- read.csv("monitoringCloudData_0.1.csv")
+
+monitoringCloudData_0.5 <- read.csv("monitoringCloudData_0.5.csv")
+
+monitoringCloudData_1 <- read.csv("monitoringCloudData_1.csv")
+
+monitoringCloudData_NONE <- read.csv("monitoringCloudData_NONE.csv")
+
+timediff <- function(baseC) {
+  
+  first <- head(baseC$currentTime, 1)
+  
+  data_inicial <- as.POSIXct(first, format = "%Y-%m-%d %H:%M:%OS")
+  
+  baseC$currentTime <- sapply(baseC$currentTime, function(tempo) {
+    
+    data_referencia <- as.POSIXct(tempo, format = "%Y-%m-%d %H:%M:%OS")
+    
+    return(as.numeric(difftime(data_referencia, data_inicial, units = "hours")))
+  })
+  
+  return(baseC)
+}
+
+
+mem <- function(memoria) {
+  if (grepl("[:xdigit:]*.T", memoria)) {
+    tera <- as.numeric(gsub("[:xdigit:]*.T", "", memoria))
+    mb <- (tera * 1000000)
+    return(paste0(round(mb, 3)))
+  } 
+  else if(grepl("[:xdigit:]*.GB", memoria)){
+    gb <- as.numeric(gsub("[:xdigit:]*.GB", "", memoria))
+    mb <- (gb * 1024)
+    return(paste0(round(mb, 3)))
+  }
+  else {
+    return(as.numeric(gsub("[:xdigit:]*.MB", "", memoria))) 
+  }
+}
+
+monitoringCloudData_0.1$usedMemory <- sapply(monitoringCloudData_0.1$usedMemory, mem)
+monitoringCloudData_0.1 = timediff(monitoringCloudData_0.1)
+
+monitoringCloudData_0.5$usedMemory <- sapply(monitoringCloudData_0.5$usedMemory, mem)
+monitoringCloudData_0.5 = timediff(monitoringCloudData_0.5)
+
+monitoringCloudData_1$usedMemory <- sapply(monitoringCloudData_1$usedMemory, mem)
+monitoringCloudData_1 = timediff(monitoringCloudData_1)
+
+monitoringCloudData_NONE$usedMemory <- sapply(monitoringCloudData_NONE$usedMemory, mem)
+monitoringCloudData_NONE = timediff(monitoringCloudData_NONE)
+
+layout(matrix(c(1, 2,
+                3, 4), nrow=2, byrow=TRUE),
+       heights = c(2, 2),  
+       widths = c(2, 2))  
+
+
+
+plot(monitoringCloudData_NONE$currentTime,monitoringCloudData_NONE$usedMemory,main = "Memory Analysis (Workload of NONE)", type = "l",col="black", xlab="Time (hour)", ylab="Used Memory (Mb)")
+
+plot(monitoringCloudData_0.1$currentTime,monitoringCloudData_0.1$usedMemory,main = "Memory Analysis (Workload of 0.1)", type = "l",col="black", xlab="Time (hour)", ylab="Used Memory (Mb)")
+
+plot(monitoringCloudData_0.5$currentTime,monitoringCloudData_0.5$usedMemory,main = "Memory Analysis (Workload of 0.5)", type = "l",col="black", xlab="Time (hour)", ylab="Used Memory (Mb)")
+
+plot(monitoringCloudData_1$currentTime,monitoringCloudData_1$usedMemory,main = "Memory Analysis (Workload of 1)", type = "l",col="black", xlab="Time (hour)", ylab="Used Memory (Mb)")
+
+
+
+``` 
+
+
+### Questão 7
+
+```{r setup7, include=TRUE, echo=TRUE}
+
+netflixData <- read.csv("https://www.dropbox.com/scl/fi/vjlgt50835d6snk03add2/netflix_titles.csv?rlkey=rzrveurxlom9cjp51nbv4w1gw&e=1&dl=1")
+
+netflix = netflixData
+
+netflix$country <- sapply(strsplit(as.character(netflix$country), ","), `[`, 1)
+
+contagem <- table(netflix$country)
+
+df_contagem <- as.data.frame(contagem)
+
+colnames(df_contagem) <- c("Paises", "Frequencia")
+
+ordem = order(df_contagem$Frequencia, decreasing = TRUE, na.last = TRUE)
+
+df_contagem = df_contagem[ordem,]
+
+df_contagem = head(df_contagem, 10)
+
+
+fig <- plot_ly(labels = ~df_contagem$Paises, values = ~df_contagem$Frequencia, type = 'pie')
+
+fig <- fig %>%
+  layout(title = '10 paises com mais conteudos - solo ')
+
+
+fig
+``` 
+
+
+### Questão 8
+
+```{r setup8, include=TRUE, echo=TRUE}
+
+
+fig <- plot_ly(
+  type = 'table',
+  header = list(
+    values = c("País","Total de Conteudos"),
+    align = 'center',
+    fill = list(color = "grey"),
+    font = list(size = 12, color = 'white')
+  ),
+  cells = list(
+    values = t(df_contagem),
+    align = 'center',
+    fill = list(color = 'white'),
+    font = list(size = 11, color = 'black')
+  )
+)
+
+fig
+
+``` 
+
+
+### Questão 9
+
+```{r setup9, include=TRUE, echo=TRUE}
+
+
+#Filmes
+movie = subset(netflixData, netflixData$type== "Movie")
+tipoAno1 <- table(movie$release_year)
+
+df_Movie <- as.data.frame(tipoAno1)
+
+colnames(df_Movie) <- c("Ano", "Frequencia")
+
+df_Movie$Ano <- as.character(df_Movie$Ano)
+
+df_Movie$Ano <- as.numeric(df_Movie$Ano)
+
+# Criando uma nova coluna para agrupar os anos em intervalos de 10 anos
+df_Movie$decada <- cut(df_Movie$Ano, breaks = seq(1920, 2030, by = 10), right = FALSE, labels = seq(1920, 2020, by = 10))
+
+resultM <- aggregate(Frequencia ~ decada, data = df_Movie, FUN = sum)
+
+#Séries
+serie = subset(netflixData, netflixData$type == "TV Show")
+tipoAno2 <- table(serie$release_year)
+
+df_Serie <- as.data.frame(tipoAno2)
+colnames(df_Serie) <- c("Ano", "Frequencia")
+
+df_Serie$Ano <- as.character(df_Serie$Ano)
+
+df_Serie$Ano <- as.numeric(df_Serie$Ano)
+
+# Criando uma nova coluna para agrupar os anos em intervalos de 10 anos
+df_Serie$decada <- cut(df_Serie$Ano, breaks = seq(1920, 2030, by = 10), right = FALSE, labels = seq(1920, 2020, by = 10))
+
+resultS <- aggregate(Frequencia ~ decada, data = df_Serie, FUN = sum)
+
+
+fig <- plot_ly(x = ~resultS$decada, y = ~resultS$Frequencia, type = 'scatter', mode = 'lines+markers', name='TV Show') %>%
+
+add_trace(x = ~resultM$decada, y = ~resultM$Frequencia, type = 'scatter', mode = 'lines+markers',name='Movies') 
+
+fig <- fig %>%
+  layout(title = 'Frequencia de filmes e series durantes os anos - Netflix',
+         yaxis=list(title = 'Qnd. Conteúdo'),
+         xaxis=list(title = 'Década'))
+
+fig
+
+
+``` 
+
+### Questão 10
+
+```{r setup10, include=TRUE, echo=TRUE}
+
+netflixGen = netflixData
+
+netflixGen$listed_in <- sapply(strsplit(as.character(netflixGen$listed_in), ","), `[`, 1)
+
+netflixGen$release_year <- as.character(netflixGen$release_year)
+
+netflixGen$release_year <- as.numeric(netflixGen$release_year)
+
+Drama = subset(netflixGen, listed_in =="Dramas" & release_year >= 2000 & release_year <= 2010)
+Action = subset(netflixGen, listed_in =="Action & Adventure" & release_year >= 2000 & release_year <= 2010)
+Comedia = subset(netflixGen, listed_in =="Comedies" & release_year >= 2000 & release_year <= 2010)
+
+
+df_count1 <- Drama %>%
+  group_by(release_year) %>%
+  summarise(count = n()) %>%
+  ungroup()
+
+
+df_count2 <- Action %>%
+  group_by(release_year) %>%
+  summarise(count = n()) %>%
+  ungroup()
+
+
+df_count3 <- Comedia %>%
+  group_by(release_year) %>%
+  summarise(count = n()) %>%
+  ungroup()
+
+
+fig <- plot_ly(
+  x = ~df_count1$release_year,
+  y = ~df_count1$count,
+  type = 'bar',
+  name = 'Dramas',
+  marker = list(color = 'blue')
+)
+
+fig <- fig %>% add_trace(
+  y = ~df_count2$count,
+  name = 'Action & Adventure',
+  marker = list(color = 'orange')
+)
+
+
+fig <- fig %>% add_trace(
+  y = ~df_count3$count,
+  name = 'Comedies',
+  marker = list(color = 'green')
+)
+
+fig <- fig %>% layout(
+  barmode = 'group',
+  title = "Quantidade de Filmes por Gênero (2000-2010)",
+  xaxis = list(title = "Ano"),
+  yaxis = list(title = "Quantidade de filmes"),
+  showlegend = TRUE,
+  legend = list(title = list(text = 'Gênero'))
+)
+
+
+fig
+
+``` 
+
+
+```{r setup11, include=FALSE, echo=FALSE}
+# Supondo que netflixData é o seu data frame original
+netflixGen = netflixData
+
+# Extrair o primeiro gênero listado em 'listed_in'
+netflixGen$listed_in <- sapply(strsplit(as.character(netflixGen$listed_in), ","), `[`, 1)
+
+# Converter o ano para numérico
+netflixGen$release_year <- as.numeric(as.character(netflixGen$release_year))
+
+# Filtrar os dados para os anos entre 2000 e 2010 e para os gêneros específicos
+netflix_filtered <- netflixGen %>%
+  filter(release_year > 2000 & release_year < 2010) %>%
+  filter(listed_in %in% c("Dramas", "Action & Adventure", "Comedies"))
+
+# Contar o número de filmes por gênero e ano
+df_count <- netflix_filtered %>%
+  group_by(release_year, listed_in) %>%
+  summarise(count = n()) %>%
+  ungroup()
+
+library(plotly)
+
+# Criando o gráfico de barras lado a lado
+fig <- plot_ly(
+  data = df_count,
+  x = ~release_year,
+  y = ~count,
+  color = ~listed_in,
+  type = 'bar',
+  text = ~count,
+  textposition = 'auto',
+  hoverinfo = 'text+y+name'
+)
+
+# Ajustando o layout para barras lado a lado
+fig <- fig %>% layout(
+  barmode = 'group',
+  title = "Quantidade de Filmes por Gênero (2000-2010)",
+  xaxis = list(title = "Ano"),
+  yaxis = list(title = "Quantidade de Filmes"),
+  showlegend = TRUE,
+  legend = list(title = list(text = 'Gênero'))
+)
+
+# Exibindo o gráfico
+fig
+
+
+``` 

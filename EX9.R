@@ -16,8 +16,8 @@ View(cats_data)
 media = mean(cats_data$Bwt)
 
 --------------------
-
-fileURL = "https://www.dropbox.com/s/9wnr69i6bjhqyct/Snail_feeding.csv?dl=1"
+  
+  fileURL = "https://www.dropbox.com/s/9wnr69i6bjhqyct/Snail_feeding.csv?dl=1"
 destfile = "C:/Users/Lucas Henrique/Documents/Snail_feeding.csv"
 
 download.file( fileURL,destfile ,method = "auto")

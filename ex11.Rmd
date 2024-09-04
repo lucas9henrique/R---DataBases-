@@ -1,0 +1,83 @@
+---
+title: "Exercicio 11"
+author: "Lucas Henrique Gonzaga de Sales"
+date: "12/08/2024"
+output: html_document
+bibliography: ref.bib
+---
+
+
+```{r setup, include=FALSE, echo=FALSE}
+
+library(dplyr)
+library(DT)
+
+``` 
+
+## Abas{.tabset}
+
+### 1- Operações Iniciais
+```{r base_de_dados, include=TRUE, echo=TRUE}
+
+#Filtrando os dados com o mes igual a agosto
+database = subset(airquality,
+                  Month == 8)
+
+#Ordenando pela temperatura
+database = database %>% arrange(desc(Temp))
+
+database
+
+``` 
+
+
+### 2- Database
+```{r base_de_dados2, include=TRUE, echo=TRUE}
+datatable(database)
+``` 
+@kaya2019spatial
+
+### 3- Equações
+
+#### 1. Lei de Gauss para o Campo Elétrico
+
+\[
+\nabla \cdot \mathbf{E} = \frac{\rho}{\epsilon_0}
+\]
+
+#### 2. Lei de Gauss para o Campo Magnético
+
+\[
+\nabla \cdot \mathbf{B} = 0
+\]
+
+#### 3. Lei de Faraday da Indução
+
+\[
+\nabla \times \mathbf{E} = -\frac{\partial \mathbf{B}}{\partial t}
+\]
+
+#### 4. Lei de Ampère-Maxwell
+
+\[
+\nabla \times \mathbf{B} = \mu_0 \mathbf{J} + \mu_0 \epsilon_0 \frac{\partial \mathbf{E}}{\partial t}
+\]
+@huray2009maxwell
+
+#### 5. Equação de Clausius-Clapeyron
+
+\[
+\frac{dP}{dT} = \frac{L}{T \Delta V}
+\]
+@brown1951clausius
+
+### 4- Imagens
+
+![](Air-pollution-in-world-real-time-air.png)
+
+@neural
+![](https://media.cnn.com/api/v1/images/stellar/prod/160927195715-air-pollution-map-who.jpg?q=w_1110,c_fill/f_webp)
+@kabacoff2022r
+
+### 5- Referencias
+#### Referências
