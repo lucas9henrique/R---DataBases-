@@ -28,7 +28,7 @@ library(DT)
 ### 3- Import e Preparação
 ```{r setup1, include=TRUE, echo=TRUE}
 
-data <- read.csv("C:/Users/Lucas Henrique/Documents/GitHub/R---DataBases-/Dados_Estatisticos.csv",sep = ";", header=TRUE)
+data <- read.csv("C:/Users/Lucas Henrique/Desktop/UFRPE/Comp. Analise de Dados/Dados_Estatisticos.csv",sep = ";", header=TRUE)
 
 data_filt <- data %>% select(4,5,6,7,8,10,12,13,14,16,20,21)
 
@@ -43,12 +43,15 @@ data_filt <- data_filt %>% filter(
 
 data_filt$PASSAGEIROS_TOTAIS = data_filt$PASSAGEIROS_GRATIS + data_filt$PASSAGEIROS_PAGOS
 
-data_filt
+datatable(head(data_filt,20), options = list(scrollX = TRUE))
+
 
 ```
 
 
-### 4- Operações Iniciais
+### 4- Dados
+
+Juntar gráficos num só
 ```{r setup2, include=TRUE, echo=TRUE}
 df_ano <- data_filt %>%
   group_by(ANO) %>%
@@ -66,6 +69,47 @@ fig <- fig %>%
 fig
 
 ```
+```{r 2023, include=TRUE, echo=TRUE}
+
+data_2023 <- data_filt %>% filter(ANO == 2023)
+
+datatable(head(data_2023,20), options = list(scrollX = TRUE))
+
+df_2023 <- data_2023 %>%
+  group_by(MES) %>%
+  summarise(soma_valores = sum(PASSAGEIROS_TOTAIS, na.rm = TRUE))
+
+fig <- plot_ly(x = ~df_2023$MES, y = ~df_2023$soma_valores, type = 'scatter', mode = 'lines+markers')
+
+fig <- fig %>%
+  layout(title = 'Frequencia de voos durantes os meses de 2023',
+         yaxis=list(title = 'Qnd de Voos'),
+         xaxis=list(title = 'Meses'))
+
+fig
+
+```
+
+```{r 2020, include=TRUE, echo=TRUE}
+
+data_2020 <- data_filt %>% filter(ANO == 2020)
+
+datatable(head(data_2020,20), options = list(scrollX = TRUE))
+
+df_2020 <- data_2020 %>%
+  group_by(MES) %>%
+  summarise(soma_valores = sum(PASSAGEIROS_TOTAIS, na.rm = TRUE))
+
+fig <- plot_ly(x = ~df_2020$MES, y = ~df_2020$soma_valores, type = 'scatter', mode = 'lines+markers')
+
+fig <- fig %>%
+  layout(title = 'Frequencia de voos durantes os meses de 2020',
+         yaxis=list(title = 'Qnd de Voos'),
+         xaxis=list(title = 'Meses'))
+
+fig
+
+```
 
 ```{r 2019, include=TRUE, echo=TRUE}
 
@@ -73,7 +117,7 @@ data_2019 <- data_filt %>% filter(ANO == 2019)
 
 datatable(head(data_2019,20), options = list(scrollX = TRUE))
 
-df_2019 <- data_filt %>%
+df_2019 <- data_2019 %>%
   group_by(MES) %>%
   summarise(soma_valores = sum(PASSAGEIROS_TOTAIS, na.rm = TRUE))
 
