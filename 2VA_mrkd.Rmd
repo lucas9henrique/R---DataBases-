@@ -16,7 +16,16 @@ Esses dados são interessantes para analisar tendencias de viagens e em relaçã
 
 
 ### 2- Pacotes Necessários
-```{r setup, include=TRUE, echo=FALSE}
+library(plotly) \n
+
+library(dplyr) \n
+
+library(tidyr) \n
+
+library(DT)
+
+
+```{r setup, include=FALSE, echo=FALSE}
 library(plotly)
 library(dplyr)
 library(tidyr)
@@ -49,10 +58,10 @@ datatable(head(data_filt,20), options = list(scrollX = TRUE))
 ```
 
 
-### 4- Dados
+### 4- Dados{.tabset}
 
-Juntar gráficos num só
-```{r setup2, include=TRUE, echo=TRUE}
+#### 1 - Geral
+```{r setup2, include=TRUE,  echo=FALSE}
 df_ano <- data_filt %>%
   group_by(ANO) %>%
   summarise(soma_valores = sum(PASSAGEIROS_TOTAIS, na.rm = TRUE))
@@ -69,11 +78,17 @@ fig <- fig %>%
 fig
 
 ```
-```{r 2023, include=TRUE, echo=TRUE}
+#### 2 - 2023,2020 e 2019 
+```{r 2023, include=TRUE,  echo=FALSE}
+
+# Configurando o layout
+layout(matrix(c(1, 2,
+                3, 3), nrow=2, byrow=TRUE))  
+
 
 data_2023 <- data_filt %>% filter(ANO == 2023)
 
-datatable(head(data_2023,20), options = list(scrollX = TRUE))
+#datatable(head(data_2023,20), options = list(scrollX = TRUE))
 
 df_2023 <- data_2023 %>%
   group_by(MES) %>%
@@ -88,13 +103,9 @@ fig <- fig %>%
 
 fig
 
-```
-
-```{r 2020, include=TRUE, echo=TRUE}
-
 data_2020 <- data_filt %>% filter(ANO == 2020)
 
-datatable(head(data_2020,20), options = list(scrollX = TRUE))
+#datatable(head(data_2020,20), options = list(scrollX = TRUE))
 
 df_2020 <- data_2020 %>%
   group_by(MES) %>%
@@ -109,13 +120,10 @@ fig <- fig %>%
 
 fig
 
-```
-
-```{r 2019, include=TRUE, echo=TRUE}
 
 data_2019 <- data_filt %>% filter(ANO == 2019)
 
-datatable(head(data_2019,20), options = list(scrollX = TRUE))
+#datatable(head(data_2019,20), options = list(scrollX = TRUE))
 
 df_2019 <- data_2019 %>%
   group_by(MES) %>%
@@ -132,6 +140,55 @@ fig
 
 ```
 
+#### 3 - Brasil 2014 e 2016
+
+12 de jun. de 2014 – 13 de jul. de 2014
+
+```{r br14, include=TRUE, echo=FALSE}
+
+brasil14 <- data_filt %>% filter(ANO == 2014)
+
+brasil14 <- brasil14 %>% filter(AEROPORTO_DE_DESTINO_PAIS == "BRASIL")
+
+df_14 <- brasil14 %>%
+  group_by(MES) %>%
+  summarise(soma_valores = sum(PASSAGEIROS_TOTAIS, na.rm = TRUE))
+
+fig <- plot_ly(x = ~df_14$MES, y = ~df_14$soma_valores, type = 'scatter', mode = 'lines+markers')
+
+fig <- fig %>%
+  layout(title = 'Frequencia de voos durantes os meses de 2014',
+         yaxis=list(title = 'Qnd de Voos'),
+         xaxis=list(title = 'Meses'))
+
+fig
+
+
+```
+
+
+5 de agosto de 2016 – 21 de agosto de 2016
+```{r br16, include=TRUE,  echo=FALSE}
+
+brasil16 <- data_filt %>% filter(ANO == 2016)
+
+brasil16 <- brasil16 %>% filter(AEROPORTO_DE_DESTINO_PAIS == "BRASIL")
+
+df_16 <- brasil16 %>%
+  group_by(MES) %>%
+  summarise(soma_valores = sum(PASSAGEIROS_TOTAIS, na.rm = TRUE))
+
+fig <- plot_ly(x = ~df_16$MES, y = ~df_16$soma_valores, type = 'scatter', mode = 'lines+markers')
+
+fig <- fig %>%
+  layout(title = 'Frequencia de voos durantes os meses de 2016',
+         yaxis=list(title = 'Qnd de Voos'),
+         xaxis=list(title = 'Meses'))
+
+fig
+
+
+```
 
 
 ### 5- Conclusão
