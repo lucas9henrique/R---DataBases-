@@ -472,7 +472,7 @@ final_plot <- mapa_passageiros + grafico_barras +
 print(final_plot)
 ```
 
-```{r mapa2019, include=TRUE, echo=FALSE, fig.width=12, fig.height=6, warning=FALSE, message=FALSE, out.width="100%", out.height="100%"}
+```{r mapa2019, include=TRUE, echo=FALSE, fig.width=12, fig.height=6, warning=FALSE, message=FALSE}
 # Definir opções globais para remover warnings e mensagens
 knitr::opts_chunk$set(warning = FALSE, message = FALSE) 
 

@@ -1,0 +1,14 @@
+/* Forçar os gráficos a ocuparem toda a largura disponível */
+.plot-container, img {
+    width: 100% !important; /* Forçar largura total */
+    height: auto;           /* Ajustar altura automaticamente */
+    display: block;         /* Evitar que sejam renderizados como inline */
+    margin: 0 auto;         /* Centralizar os gráficos na página */
+}
+/* Aumentar o tamanho do painel de figuras */
+figure.panel.panel-default {
+    width: 100% !important;  /* Aumentar a largura para ocupar todo o espaço */
+    max-width: 100% !important; /* Evitar que a largura seja limitada */
+    height: auto;  /* Ajuste automático da altura */
+    margin: 0 auto;  /* Centralizar na página */
+}
