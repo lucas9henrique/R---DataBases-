@@ -1,9 +1,6 @@
 ---
 output:
    rmdformats::material:
-    toc: true
-    toc_depth: 2
-    toc_float: false
     self_contained: true
     thumbnails: true
     lightbox: true
@@ -11,7 +8,8 @@ output:
     fig_width: 8
     fig_height: 6
     theme: "default"
-    highlight: "pygments" 
+    highlight: "pygments"
+    css: styles.css 
 ---
 # Analise de Informações Aereas{.tabset}
 
@@ -63,6 +61,8 @@ library(geobr)
 library(ggplot2)
 library(patchwork)
 library(rmdformats)
+library(viridis)
+library(scales)
 
 
 ```
@@ -424,15 +424,17 @@ df_33 <- brasil14 %>%
 
 ```
 
-```{r mapa14, include=TRUE,  echo=FALSE}
+```{r mapa14, include=TRUE, echo=FALSE, fig.width=12, fig.height=6, warning=FALSE, message=FALSE}
+# Definir opções globais para remover warnings e mensagens
+knitr::opts_chunk$set(warning = FALSE, message = FALSE) 
 
-# Carregar dados dos estados brasileiros (shapefile)
-brasil_states <- read_state(year = 2020) 
+# Carregar dados dos estados brasileiros (shapefile) sem o warning
+brasil_states <- suppressWarnings(read_state(year = 2020))
 
 # Mesclar os dados de passageiros com os dados espaciais dos estados
 brasil_states <- merge(brasil_states, df_33, by.x = "abbrev_state", by.y = "AEROPORTO_DE_DESTINO_UF")
 
-# Criar o mapa com as melhorias solicitadas
+# Criar o mapa de passageiros
 mapa_passageiros <- ggplot(data = brasil_states) +
   geom_sf(aes(fill = soma_valores), color = "black") +  # Preenchendo os estados com base no total de passageiros
   scale_fill_viridis_c(
@@ -450,11 +452,7 @@ mapa_passageiros <- ggplot(data = brasil_states) +
     axis.ticks = element_blank()   # Remove as marcas dos eixos
   )
 
-# Exibir o mapa
-print(mapa_passageiros)
-
-
-# Criar o gráfico de barras com os valores de passageiros por estado
+# Criar o gráfico de barras
 grafico_barras <- ggplot(data = df_33, aes(x = reorder(AEROPORTO_DE_DESTINO_UF, -soma_valores), y = soma_valores)) +
   geom_bar(stat = "identity", fill = "steelblue") +  # Gráfico de barras preenchido com cor
   scale_y_continuous(labels = scales::label_number(scale = 1e-6, suffix = "M")) +  # Converte para milhões (M)
@@ -465,23 +463,26 @@ grafico_barras <- ggplot(data = df_33, aes(x = reorder(AEROPORTO_DE_DESTINO_UF, 
     axis.text.x = element_text(angle = 45, hjust = 1)  # Rotacionar rótulos dos estados
   )
 
-# Exibir o gráfico de barras
-print(grafico_barras)
+# Usar patchwork para dispor os gráficos lado a lado com ajuste de margens e espaçamento
+final_plot <- mapa_passageiros + grafico_barras + 
+  plot_layout(ncol = 2) +
+  plot_annotation(theme = theme(plot.margin = margin(10, 10, 10, 10)))  # Ajustar margens para mais espaço
 
-
+# Exibir os gráficos
+print(final_plot)
 ```
 
-```{r mapa2019, include=TRUE,  echo=FALSE}
+```{r mapa2019, include=TRUE, echo=FALSE, fig.width=12, fig.height=6, warning=FALSE, message=FALSE, out.width="100%", out.height="100%"}
+# Definir opções globais para remover warnings e mensagens
+knitr::opts_chunk$set(warning = FALSE, message = FALSE) 
 
-#brasil14
+# Agrupar e sumarizar os dados de passageiros para 2019
 df_19 <- brasil19 %>%
   group_by(AEROPORTO_DE_DESTINO_UF) %>%
   summarise(soma_valores = sum(PASSAGEIROS_TOTAIS, na.rm = TRUE))
 
-#datatable(head(df_19,30), options = list(scrollX = TRUE))
-
-# Carregar dados dos estados brasileiros (shapefile)
-brasil_states <- read_state(year = 2020) 
+# Carregar dados dos estados brasileiros (shapefile) sem o warning
+brasil_states <- suppressWarnings(read_state(year = 2020))
 
 # Mesclar os dados de passageiros com os dados espaciais dos estados
 brasil_states <- merge(brasil_states, df_19, by.x = "abbrev_state", by.y = "AEROPORTO_DE_DESTINO_UF")
@@ -504,10 +505,6 @@ mapa_passageiros <- ggplot(data = brasil_states) +
     axis.ticks = element_blank()   # Remove as marcas dos eixos
   )
 
-# Exibir o mapa
-print(mapa_passageiros)
-
-
 # Criar o gráfico de barras com os valores de passageiros por estado
 grafico_barras <- ggplot(data = df_19, aes(x = reorder(AEROPORTO_DE_DESTINO_UF, -soma_valores), y = soma_valores)) +
   geom_bar(stat = "identity", fill = "steelblue") +  # Gráfico de barras preenchido com cor
@@ -519,8 +516,13 @@ grafico_barras <- ggplot(data = df_19, aes(x = reorder(AEROPORTO_DE_DESTINO_UF, 
     axis.text.x = element_text(angle = 45, hjust = 1)  # Rotacionar rótulos dos estados
   )
 
-# Exibir o gráfico de barras
-print(grafico_barras)
+# Usar patchwork para dispor os gráficos lado a lado com ajuste de margens e espaçamento
+final_plot <- mapa_passageiros + grafico_barras + 
+  plot_layout(ncol = 2) +
+  plot_annotation(theme = theme(plot.margin = margin(10, 10, 10, 10)))
+
+# Exibir os gráficos
+print(final_plot)
 
 
 ```
