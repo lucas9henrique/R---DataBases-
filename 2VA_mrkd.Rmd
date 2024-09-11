@@ -1,21 +1,43 @@
 ---
-title: "Analise de Informações Aereas"
-author: "Lucas"
-date: "`r Sys.Date()`"
 output: html_document
 ---
-## Abas{.tabset}
+# Analise de Informações Aereas{.tabset}
 
-### 1- Introdução
+## 1- Introdução
 
-Essa análise é correspondente aos dados gerados por viagens de avião durante os anos 2000-2024 de todos os aeroportos do mundo.
+### **Análise do Sistema Aeroviário Global (2000-2024)**
 
-Esses dados são interessantes para analisar tendencias de viagens e em relação aos impactos que os varios eventos mundiais causam no sistema aeroviário.
+#### **Introdução**
 
+Essa análise é baseada em dados gerados por viagens de avião entre os anos de 2000 e 2024, abrangendo todos os aeroportos do mundo. Esses dados são cruciais para analisar tendências no transporte aéreo e os impactos de eventos globais no sistema aeroviário. 
 
+##### **Tendências de Viagens e Impactos Globais**
 
+O setor aeroviário tem crescido ao longo dos anos, sendo esse um fator essencial para as empresas de aviação ao gerar relatórios e insights. Esses dados ajudam tanto na previsão do crescimento do número de viagens com o passar dos anos quanto na identificação de alterações causadas por eventos em diferentes países.
 
-### 2- Pacotes Necessários
+##### **Exemplos de Impactos:**
+
+- **Crises Econômicas**: Recessões globais podem reduzir a demanda por viagens, o que afeta diretamente a taxa de ocupação dos voos.
+- **Pandemias**: Como visto com a COVID-19, a demanda por viagens despencou, alterando drasticamente o comportamento de passageiros e companhias.
+- **Eventos Climáticos e Políticos**: Fenômenos naturais, como furacões, ou instabilidades políticas podem influenciar rotas e a frequência de voos.
+
+##### **Dados da ANAC**
+
+A base de dados da ANAC (Agência Nacional de Aviação Civil) fornece informações detalhadas sobre:
+
+- Quantidade de passageiros
+- Carga e mala postal transportadas
+- Distância voada
+- Combustível consumido
+- Etapas de voo e empresa aérea
+
+Essas informações podem ser usadas para calcular indicadores importantes para o setor de aviação, como demanda, oferta, participação de mercado e taxa de ocupação de aeronaves.
+
+##### **Conclusão**
+
+Esses dados são vitais para o setor de aviação e permitem a identificação de tendências, impactos de eventos globais e a otimização da oferta de serviços aéreos. Para empresas de aviação, ter acesso a essas métricas é crucial para melhorar o planejamento estratégico, prever o crescimento e se preparar para possíveis impactos futuros.
+
+## 2- Pacotes Necessários
 library(plotly) \n
 
 library(dplyr) \n
@@ -23,7 +45,6 @@ library(dplyr) \n
 library(tidyr) \n
 
 library(DT)
-
 
 ```{r setup, include=FALSE, echo=FALSE}
 library(plotly)
@@ -33,13 +54,47 @@ library(DT)
 
 ```
 
+## 3- Import e Preparação
 
-### 3- Import e Preparação
-```{r setup1, include=TRUE, echo=TRUE}
+### **Estrutura dos dados**
+Os dados estão distribuidos da seguinte forma:
+```{r tratamento1, include=TRUE, echo=TRUE}
 
 data <- read.csv("C:/Users/Lucas Henrique/Desktop/UFRPE/Comp. Analise de Dados/Dados_Estatisticos.csv",sep = ";", header=TRUE)
 
+dim(data)
+
+```
+Temos 1.018.628 Linhas e 38 Colunas na nossa base.
+
+### Seleção das colunas relevantes
+Nós iremos realizar algumas alterações para que possamos utilizar a base para nossas análises. Inicialmente manteremos somente as seguintes colunas:
+
+- 4 AEROPORTO_DE_ORIGEM_SIGLA: Sigla (código) do aeroporto de origem.
+- 5 AEROPORTO_DE_ORIGEM_NOME: Nome completo do aeroporto de origem.
+- 6 AEROPORTO_DE_ORIGEM_UF: Unidade Federativa (estado) do aeroporto de origem.
+- 7 AEROPORTO_DE_ORIGEM_REGIAO: Região geográfica do aeroporto de origem.
+- 8 AEROPORTO_DE_ORIGEM_PAIS: País onde está localizado o aeroporto de origem.
+- 10 AEROPORTO_DE_DESTINO_SIGLA: Sigla (código) do aeroporto de destino.
+- 12 AEROPORTO_DE_DESTINO_UF: Unidade Federativa (estado) do aeroporto de destino.
+- 13 AEROPORTO_DE_DESTINO_REGIAO: Região geográfica do aeroporto de destino.
+- 14 AEROPORTO_DE_DESTINO_PAIS: País onde está localizado o aeroporto de destino.
+- 16 NATUREZA: Natureza do voo (pode indicar se é doméstico, internacional, etc.).
+- 20 CARGA_PAGA_KG: Quantidade de carga paga transportada (em quilogramas).
+- 21 CARGA_GRATIS_KG: Quantidade de carga transportada gratuitamente (em quilogramas).
+
+```{r tratamento2, include=TRUE, echo=FALSE}
+
+
 data_filt <- data %>% select(4,5,6,7,8,10,12,13,14,16,20,21)
+
+
+```
+
+### Tratamento de valores faltantes
+
+Após selecionar as colunas que serão utilizadas, vamos checá-las e retirar os valores que são vazios ou NA, para evitar inconsistências.
+```{r tratamento3, include=TRUE, echo=TRUE}
 
 data_filt <- data_filt %>% filter(
   !is.na(ANO) & ANO != "" &
@@ -47,26 +102,38 @@ data_filt <- data_filt %>% filter(
     !is.na(AEROPORTO_DE_ORIGEM_NOME) & AEROPORTO_DE_ORIGEM_NOME != "" &
     !is.na(AEROPORTO_DE_DESTINO_NOME) & AEROPORTO_DE_DESTINO_NOME != "" &
     !is.na(PASSAGEIROS_PAGOS) &
-    !is.na(PASSAGEIROS_GRATIS)
+    !is.na(PASSAGEIROS_GRATIS) &
+    AEROPORTO_DE_DESTINO_PAIS == "BRASIL"
 )
+
+```
+### Criação da coluna `PASSAGEIROS_TOTAIS` 
+
+Por último, vamos realizar a unificação das colunas "Passageiros Gratis" e "Passageiros Pagos", gerando a coluna resultante PASSAGEIROS_TOTAIS, referente ao total de passageiros por voo, que será um dado importante na nossa análise.
+```{r tratamento4, include=TRUE, echo=TRUE}
 
 data_filt$PASSAGEIROS_TOTAIS = data_filt$PASSAGEIROS_GRATIS + data_filt$PASSAGEIROS_PAGOS
 
-datatable(head(data_filt,20), options = list(scrollX = TRUE))
+```
 
+### Visualização do dataset final
+
+Assim, temos a disposição final do nosso dataset após as operações iniciais de pré-processamento.
+```{r tratamento5, include=TRUE, echo=TRUE}
+
+datatable(head(data_filt,20), options = list(scrollX = TRUE))
 
 ```
 
+## 4- Analise dos dados{.tabset}
 
-### 4- Dados{.tabset}
-
-#### 1 - Geral
+### 1 - Geral
 ```{r setup2, include=TRUE,  echo=FALSE}
 df_ano <- data_filt %>%
   group_by(ANO) %>%
   summarise(soma_valores = sum(PASSAGEIROS_TOTAIS, na.rm = TRUE))
 
-datatable(head(df_ano,20), options = list(scrollX = TRUE))
+#datatable(head(df_ano,20), options = list(scrollX = TRUE))
 
 fig <- plot_ly(x = ~df_ano$ANO, y = ~df_ano$soma_valores, type = 'scatter', mode = 'lines+markers')
   
@@ -78,69 +145,124 @@ fig <- fig %>%
 fig
 
 ```
-#### 2 - 2023,2020 e 2019 
+### 2 - 2023,2020 e 2019 
 ```{r 2023, include=TRUE,  echo=FALSE}
 
-# Configurando o layout
-layout(matrix(c(1, 2,
-                3, 3), nrow=2, byrow=TRUE))  
-
-
+# Filtrando os dados para o ano de 2023
 data_2023 <- data_filt %>% filter(ANO == 2023)
-
-#datatable(head(data_2023,20), options = list(scrollX = TRUE))
-
 df_2023 <- data_2023 %>%
   group_by(MES) %>%
   summarise(soma_valores = sum(PASSAGEIROS_TOTAIS, na.rm = TRUE))
 
-fig <- plot_ly(x = ~df_2023$MES, y = ~df_2023$soma_valores, type = 'scatter', mode = 'lines+markers')
+fig_2023 <- plot_ly(x = ~df_2023$MES, y = ~df_2023$soma_valores, type = 'scatter', mode = 'lines+markers', name = '2023', width = 1000,
+    height = 600) %>%
+  layout(
+    title = 'Frequência de voos em 2023',
+    xaxis = list(title = 'Meses do ano', tickvals = 1:12, ticktext = c("Jan", "Fev", "Mar", "Abr", "Mai", "Jun", "Jul", "Ago", "Set", "Out", "Nov", "Dez")),
+    yaxis = list(title = 'Quantidade de Voos')
+  )
 
-fig <- fig %>%
-  layout(title = 'Frequencia de voos durantes os meses de 2023',
-         yaxis=list(title = 'Qnd de Voos'),
-         xaxis=list(title = 'Meses'))
+# Filtrando os dados para o Brasil em 2021
+brasil21 <- data_filt %>% filter(ANO == 2021)
+df_21 <- brasil21 %>%
+  group_by(MES) %>%
+  summarise(soma_valores = sum(PASSAGEIROS_TOTAIS, na.rm = TRUE))
 
-fig
+fig_2021 <- plot_ly(x = ~df_21$MES, y = ~df_21$soma_valores, type = 'scatter', mode = 'lines+markers', name = '2021', width = 1000,
+    height = 600) %>%
+  layout(
+    title = 'Frequência de voos em 2014 (Brasil)',
+    xaxis = list(title = 'Meses do ano', tickvals = 1:12, ticktext = c("Jan", "Fev", "Mar", "Abr", "Mai", "Jun", "Jul", "Ago", "Set", "Out", "Nov", "Dez")),
+    yaxis = list(title = 'Quantidade de Voos')
+  )
 
+
+# Filtrando os dados para o ano de 2020
 data_2020 <- data_filt %>% filter(ANO == 2020)
-
-#datatable(head(data_2020,20), options = list(scrollX = TRUE))
-
 df_2020 <- data_2020 %>%
   group_by(MES) %>%
   summarise(soma_valores = sum(PASSAGEIROS_TOTAIS, na.rm = TRUE))
 
-fig <- plot_ly(x = ~df_2020$MES, y = ~df_2020$soma_valores, type = 'scatter', mode = 'lines+markers')
+fig_2020 <- plot_ly(x = ~df_2020$MES, y = ~df_2020$soma_valores, type = 'scatter', mode = 'lines+markers', name = '2020', width = 1000,
+    height = 600) %>%
+  layout(
+    title = 'Frequência de voos em 2020',
+    xaxis = list(title = 'Meses do ano', tickvals = 1:12, ticktext = c("Jan", "Fev", "Mar", "Abr", "Mai", "Jun", "Jul", "Ago", "Set", "Out", "Nov", "Dez"), tickangle = -45),
+    yaxis = list(title = 'Quantidade de Voos')
+  )
 
-fig <- fig %>%
-  layout(title = 'Frequencia de voos durantes os meses de 2020',
-         yaxis=list(title = 'Qnd de Voos'),
-         xaxis=list(title = 'Meses'))
-
-fig
-
-
+# Filtrando os dados para o ano de 2019
 data_2019 <- data_filt %>% filter(ANO == 2019)
-
-#datatable(head(data_2019,20), options = list(scrollX = TRUE))
-
 df_2019 <- data_2019 %>%
   group_by(MES) %>%
   summarise(soma_valores = sum(PASSAGEIROS_TOTAIS, na.rm = TRUE))
 
-fig <- plot_ly(x = ~df_2019$MES, y = ~df_2019$soma_valores, type = 'scatter', mode = 'lines+markers')
+fig_2019 <- plot_ly(x = ~df_2019$MES, y = ~df_2019$soma_valores, type = 'scatter', mode = 'lines+markers', name = '2019', width = 1000,
+    height = 600) %>%
+  layout(
+    title = 'Frequência de voos em 2019',
+    xaxis = list(title = 'Meses do ano', tickvals = 1:12, ticktext = c("Jan", "Fev", "Mar", "Abr", "Mai", "Jun", "Jul", "Ago", "Set", "Out", "Nov", "Dez"), tickangle = -45),
+    yaxis = list(title = 'Quantidade de Voos')
+  )
 
-fig <- fig %>%
-  layout(title = 'Frequencia de voos durantes os meses de 2019',
-         yaxis=list(title = 'Qnd de Voos'),
-         xaxis=list(title = 'Meses'))
+# Organizando os gráficos em layout usando subplot
+fig_layout <- subplot(
+  fig_2023,fig_2021,
+  fig_2019,fig_2020,
+  nrows = 2, shareX = TRUE, shareY = TRUE
+) %>%
+  layout(title = 'Comparação de Voos por Ano',
+         legend = list(title = list(text = 'Ano'), x = 0.1, y = 1.1,
+         x = 1,  # Posição horizontal (direita)
+         y = 0,  # Posição vertical (embaixo)
+         xanchor = 'right',
+         yanchor = 'bottom'),
+          annotations = list(
+      list(
+        x = 0.1,  # Posição horizontal
+        y = 1.05,  # Posição vertical
+        text = "Frequência de voos em 2023",  # Título para fig_2023
+        showarrow = FALSE,
+        xref = 'paper',
+        yref = 'paper',
+        font = list(size = 14)
+      ),
+      list(
+        x = 0.9,  # Posição horizontal
+        y = 1.05,  # Posição vertical
+        text = "Frequência de voos em 2021",  # Título para fig_2021
+        showarrow = FALSE,
+        xref = 'paper',
+        yref = 'paper',
+        font = list(size = 14)
+      ),
+      list(
+        x = 0.1,
+        y = 0.5,
+        text = "Frequência de voos em 2019",  # Título para fig_2019
+        showarrow = FALSE,
+        xref = 'paper',
+        yref = 'paper',
+        font = list(size = 14)
+      ),
+      list(
+        x = 0.9,
+        y = 0.5,
+        text = "Frequência de voos em 2020",  # Título para fig_2020
+        showarrow = FALSE,
+        xref = 'paper',
+        yref = 'paper',
+        font = list(size = 14)
+      )
+    ))
 
-fig
+# Exibir o gráfico
+fig_layout
+
 
 ```
 
-#### 3 - Brasil 2014 e 2016
+### 3 - Brasil 2014 e 2016
 
 12 de jun. de 2014 – 13 de jul. de 2014
 
@@ -191,4 +313,4 @@ fig
 ```
 
 
-### 5- Conclusão
+## 5- Conclusão
