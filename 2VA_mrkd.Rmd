@@ -1,5 +1,17 @@
 ---
-output: html_document
+output:
+   rmdformats::material:
+    toc: true
+    toc_depth: 2
+    toc_float: false
+    self_contained: true
+    thumbnails: true
+    lightbox: true
+    code_folding: hide
+    fig_width: 8
+    fig_height: 6
+    theme: "default"
+    highlight: "pygments" 
 ---
 # Analise de Informações Aereas{.tabset}
 
@@ -9,7 +21,7 @@ output: html_document
 
 #### **Introdução**
 
-Essa análise é baseada em dados gerados por viagens de avião entre os anos de 2000 e 2024, abrangendo todos os aeroportos do mundo. Esses dados são cruciais para analisar tendências no transporte aéreo e os impactos de eventos globais no sistema aeroviário. **Atualizado em: 2024-08-20**
+Essa análise é baseada em dados gerados por viagens de avião entre os anos de 2000 e 2024, abrangendo os aeroportos do Brasil. Esses dados são cruciais para analisar tendências no transporte aéreo e os impactos de eventos globais no sistema aeroviário. **Atualizado em: 2024-08-20**
 
 ##### **Tendências de Viagens e Impactos Globais**
 
@@ -41,6 +53,7 @@ Esses dados são vitais para o setor de aviação e permitem a identificação d
 ## 2- Pacotes Necessários
 
 ```{r setup1, include=FALSE, echo=FALSE}
+
 library(plotly)
 library(dplyr)
 library(tidyr)
@@ -49,27 +62,31 @@ library(knitr)
 library(geobr)
 library(ggplot2)
 library(patchwork)
+library(rmdformats)
 
 
 ```
 
 ```{r setup, include=TRUE, echo=FALSE}
 
-# Criar os dados da tabela'
 pacotes <- data.frame(
   Pacotes = c("library(plotly)", 
               "library(dplyr)", 
               "library(tidyr)", 
               "library(DT)",
-              "library(knitr)"),
+              "library(knitr)",
+              "library(geobr)",
+              "library(ggplot2)"),
   Utilização = c("criação de gráficos interativos e dinâmicos",
                  "ferramenta poderosa para manipulação e análise de DataFrames",
                  "organização, transformação e limpeza eficiente de dados",
                  "construção de tabelas interativas em páginas HTML",
-                 "criação e exibição de tabelas em relatórios")
+                 "criação e exibição de tabelas em relatórios",
+                 "download e visualização de dados geoespaciais do Brasil",
+                 "criação de gráficos estatísticos e visualizações em geral")
 )
 
-# Exibir a tabela em formato de Markdown ou HTML
+
 kable(pacotes, col.names = c("Pacotes", "Utilização"), align = "l")
 
 
